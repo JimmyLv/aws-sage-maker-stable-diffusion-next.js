@@ -1,59 +1,65 @@
-import Head from "next/head";
-import Link from "next/link";
+import React, { useState } from 'react'
 
-export default function About() {
+function Index() {
+  const [prompt, setPrompt] = useState('')
+  const [image, setImage] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (!prompt) {
+      return
+    }
+
+    setLoading(true)
+    const response = await fetch('/api/image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: [prompt],
+        num_images_per_prompt: 1,
+        height: 512,
+        width: 512,
+      }),
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      setImage(`data:image/png;base64,${data.base64images[0]}`)
+    } else {
+      console.error('An error occurred while sending the request.')
+    }
+    setLoading(false)
+  }
+
   return (
-    <div className="max-w-[512px] mx-auto p-10 bg-white rounded-lg">
-      <Head>
-        <title>Inpainting with Stable Diffusion &amp; Replicate</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      </Head>
-      {/* <h1 className="text-center text-7xl pb-3">🎨</h1> */}
-      <p className="pb-5 text-lg">
-        <strong>Inpainting</strong> is a process where missing parts of an
-        artwork are filled in to present a complete image. This{" "}
-        <a className="underline" href="https://github.com/zeke/inpainter">
-          open-source demo
-        </a>{" "}
-        uses the{" "}
-        <a
-          className="underline"
-          href="https://replicate.com/stability-ai/stable-diffusion"
-        >
-          Stable Diffusion
-        </a>{" "}
-        machine learning model and{" "}
-        <a className="underline" href="https://replicate.com">
-          Replicate&apos;s API
-        </a>{" "}
-        to inpaint images right in your browser.
-      </p>
-
-      <Link href="/paint">
-        <video autoPlay loop muted playsInline clasName="w-full cursor-pointer">
-          <source src="/cherries-oranges-bananas.mp4" />
-        </video>
-      </Link>
-
-      {/* <ol className="list-decimal pl-5">
-        <li className="mb-2">
-          Enter a text prompt to generate an image, or upload your own starting
-          image.
-        </li>
-        <li className="mb-2">
-          Click and drag with your mouse to erase unwanted parts of the image.
-        </li>
-        <li className="mb-2">
-          Refine your text prompt (or leave it untouched) and let the model
-          generate a new inpainted image.
-        </li>
-      </ol> */}
-
-      <Link href="/paint">
-        <a className="py-3 block text-center bg-black text-white rounded-md mt-10">
-          Start painting
-        </a>
-      </Link>
+    <div className="container mx-auto max-w-5xl px-4 py-8">
+      <div className="mx-auto my-4 w-full rounded-xl bg-white p-6 shadow-md">
+        <div className="flex justify-between">
+          <h1 className="mb-4 text-xl font-bold">Image Generation</h1>
+          <a className="underline" href="https://github.com/JimmyLv/aws-sage-maker-stable-diffusion-next.js" target="_blank" rel="noreferrer">
+            open-source tutorial
+          </a>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <label className="block">
+            <span className="text-gray-700">Prompt:</span>
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            />
+          </label>
+          <button className="p-3 block text-center bg-black text-white rounded-md mt-10" type="submit" disabled={loading}>{loading ? 'Generating...' : 'Generate Image'}</button>
+        </form>
+        {image && <img src={image} alt="Generated" className="mt-4 rounded-md" />}
+      </div>
     </div>
-  );
+  )
 }
+
+export default Index
