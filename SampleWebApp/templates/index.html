@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+        body {
+            background-color: linen;
+        }
+        .container {
+            display: block;
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            text-align: center;
+            box-sizing: content-box;
+            width: 700px;
+            height: 300px;
+            padding: 15px;
+            border: 3px solid grey
+        }
+        </style>
+    </head>
+    <body class="query">
+        <div class="container"> 
+        <h1>Simple AI Art Generator</h1>
+        <h2>Text to Image</h2>
+        
+        <form action="{{ url_for('make_prediction') }}" method="post">
+            
+            
+            <div>
+                <label for="width" >Width:</label> 
+                <input type="number" id="width" name="width" placeholder="enter width here">
+            </div>
+            <div>
+                <label for="length">Length:</label>
+                <input type="number" id="length" name="length" placeholder="enter length here">
+            </div>
+            <div>
+                <label for="inputContent">Prompts:</label>
+                <textarea name="inputContent" rows="6" cols="60"></textarea>
+            </div>
+            
+            <input type="submit">
+        </form>
+        </div>
+    </body>
+</html>
+

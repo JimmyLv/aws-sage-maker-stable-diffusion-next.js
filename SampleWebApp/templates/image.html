@@ -1,0 +1,8 @@
+<html>
+    <body>
+        <h1>The images generated:</h1>
+        {% for base64image in base64images %}
+        <img src="data:image/jpeg;base64,{{ base64image }}" alt="base64image"  id="imgslot"/>
+        {% endfor %}
+    </body>
+</html>
